@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://script.google.com https://script.googleusercontent.com https://fonts.googleapis.com https://fonts.gstatic.com https://discord.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://script.google.com https://script.googleusercontent.com;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tes Seleksi Karyawan | PT. KPUS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --navy:#0C1A3A; --blue:#1840A0; --lblue:#2A5DD8;
+  --gold:#D4A843; --goldl:#FBF0D0;
+  --white:#FFFFFF; --offwhite:#F7F8FC; --gray:#E8ECF5; --mid:#7A849E; --dark:#1A2240;
+  --green:#15803D; --greenl:#DCFCE7; --red:#B91C1C; --redl:#FEE2E2;
+}
+body { font-family:'DM Sans',sans-serif; background:var(--navy); min-height:100vh; color:var(--dark); overflow-x:hidden; }
+body::before {
+  content:''; position:fixed; inset:0;
+  background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(26,64,160,.35) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(212,168,67,.12) 0%,transparent 50%);
+  pointer-events:none; z-index:0;
+}
+.screen { display:none; position:relative; z-index:1; min-height:100vh; }
+.screen.active { display:flex; flex-direction:column; }
+.sc { align-items:center; justify-content:center; padding:24px 20px; text-align:center; }
+
+.badge { display:inline-flex; align-items:center; gap:8px; background:rgba(212,168,67,.15); border:1px solid rgba(212,168,67,.4); color:var(--gold); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 16px; border-radius:100px; margin-bottom:28px; }
+.ttl { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(26px,6vw,44px); color:var(--white); line-height:1.05; margin-bottom:8px; letter-spacing:-1px; }
+.ttl .ac { color:var(--gold); display:block; }
+.sub { font-size:15px; color:rgba(255,255,255,.5); margin-bottom:32px; line-height:1.6; max-width:460px; }
+
+.card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:24px; width:100%; max-width:460px; margin-bottom:20px; }
+.clabel { font-size:11px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; text-align:left; }
+.inp { width:100%; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.15); border-radius:10px; padding:12px 16px; font-family:'DM Sans',sans-serif; font-size:16px; color:var(--white); outline:none; transition:border-color .2s; margin-bottom:10px; }
+.inp:last-of-type { margin-bottom:0; }
+.inp::placeholder { color:rgba(255,255,255,.3); }
+.inp:focus { border-color:var(--gold); }
+.errmsg { color:#FCA5A5; font-size:13px; min-height:18px; margin-top:6px; }
+
+.btn-gold { background:var(--gold); color:var(--navy); font-family:'Syne',sans-serif; font-size:15px; font-weight:800; padding:15px 44px; border:none; border-radius:13px; cursor:pointer; transition:transform .15s,box-shadow .15s; box-shadow:0 4px 24px rgba(212,168,67,.3); }
+.btn-gold:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(212,168,67,.4); }
+.btn-ghost { background:transparent; color:rgba(255,255,255,.45); font-family:'DM Sans',sans-serif; font-size:13px; border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:10px 24px; cursor:pointer; margin-top:10px; transition:color .2s,border-color .2s; }
+.btn-ghost:hover { color:var(--white); border-color:rgba(255,255,255,.3); }
+
+/* ── ADMIN PANEL ── */
+#screen-admin { background:var(--offwhite); }
+.admin-wrap { max-width:580px; width:100%; padding:28px 20px 80px; margin:0 auto; }
+.admin-header { background:var(--navy); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 20px rgba(0,0,0,.3); }
+.admin-header-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; color:var(--white); }
+.admin-header-sub { font-size:11px; color:rgba(255,255,255,.4); margin-top:1px; }
+.btn-logout { background:rgba(255,255,255,.08); color:rgba(255,255,255,.6); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; padding:7px 14px; border:1px solid rgba(255,255,255,.12); border-radius:8px; cursor:pointer; }
+
+.sec-title { font-family:'Syne',sans-serif; font-size:13px; font-weight:800; color:var(--navy); text-transform:uppercase; letter-spacing:1.5px; margin:24px 0 12px; }
+
+.gen-box { background:var(--white); border:1.5px solid var(--gray); border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+.gen-fields { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+.inp-light { width:100%; background:var(--offwhite); border:1.5px solid var(--gray); border-radius:10px; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--dark); outline:none; transition:border-color .2s; }
+.inp-light:focus { border-color:var(--blue); }
+.inp-light::placeholder { color:var(--mid); }
+.btn-gen { background:var(--navy); color:var(--white); font-family:'Syne',sans-serif; font-size:14px; font-weight:800; padding:13px 32px; border:none; border-radius:11px; cursor:pointer; width:100%; transition:background .15s; }
+.btn-gen:hover { background:var(--blue); }
+
+.code-result { background:linear-gradient(135deg,var(--navy),var(--blue)); border-radius:14px; padding:20px; text-align:center; margin-top:14px; display:none; }
+.code-result.show { display:block; }
+.cr-label { font-size:11px; color:rgba(255,255,255,.45); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.cr-name { font-size:13px; color:rgba(255,255,255,.6); margin-bottom:6px; }
+.cr-kode { font-family:'Syne',sans-serif; font-size:clamp(40px,10vw,56px); font-weight:800; color:var(--gold); letter-spacing:10px; margin-bottom:14px; }
+.cr-btns { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.btn-copy { background:var(--gold); color:var(--navy); font-family:'Syne',sans-serif; font-size:12px; font-weight:800; padding:9px 20px; border:none; border-radius:8px; cursor:pointer; }
+.btn-wa   { background:#25D366; color:#fff; font-family:'Syne',sans-serif; font-size:12px; font-weight:800; padding:9px 20px; border:none; border-radius:8px; cursor:pointer; }
+.cr-note  { font-size:11px; color:rgba(255,255,255,.35); margin-top:10px; }
+
+/* log tabel */
+.log-wrap { background:var(--white); border:1.5px solid var(--gray); border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+.log-tbl { width:100%; border-collapse:collapse; font-size:13px; }
+.log-tbl th { background:var(--navy); color:var(--gold); font-family:'Syne',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:10px 12px; text-align:left; }
+.log-tbl td { padding:10px 12px; color:var(--dark); border-bottom:1px solid var(--gray); }
+.log-tbl tr:last-child td { border-bottom:none; }
+.log-tbl tr:hover td { background:#F0F4FF; }
+.tag-used  { background:var(--greenl); color:var(--green); font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; }
+.tag-fresh { background:#FEF9C3; color:#A16207; font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; }
+.empty-log { text-align:center; padding:28px; color:var(--mid); font-size:14px; }
+
+/* ── SCREEN: PESERTA MASUK KODE ── */
+#screen-kode.sc { min-height:100vh; }
+
+/* ── SCREEN: INTRO ── */
+#screen-intro.sc { min-height:100vh; }
+.stats-row { display:flex; gap:12px; justify-content:center; margin-bottom:36px; flex-wrap:wrap; }
+.stat-pill { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 20px; color:var(--white); }
+.stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:22px; color:var(--gold); line-height:1; }
+.stat-lbl { font-size:11px; color:rgba(255,255,255,.45); margin-top:2px; text-transform:uppercase; letter-spacing:1px; }
+
+/* ── QUIZ ── */
+#screen-quiz { background:var(--offwhite); }
+.qhdr { background:var(--navy); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:100; box-shadow:0 2px 20px rgba(0,0,0,.3); }
+.qhdr-title { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--white); }
+.qhdr-sub   { font-size:11px; color:rgba(255,255,255,.4); margin-top:1px; }
+.timer-block { display:flex; flex-direction:column; align-items:center; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:6px 14px; min-width:86px; }
+.timer-lbl { font-size:9px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:1px; }
+.timer-val { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--gold); letter-spacing:1px; line-height:1.1; }
+.timer-val.warn { color:#FCA5A5; }
+.timer-val.danger { color:#EF4444; animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.4} }
+.pbwrap { background:rgba(255,255,255,.1); border-radius:100px; height:4px; overflow:hidden; width:100%; max-width:130px; }
+.pbfill { height:100%; background:var(--gold); border-radius:100px; transition:width .4s; }
+
+.qbody { padding:28px 20px 120px; max-width:740px; margin:0 auto; }
+.qmeta { display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.qcounter { font-size:12px; font-weight:600; color:var(--mid); text-transform:uppercase; letter-spacing:1.5px; }
+.qtag { display:inline-block; background:var(--navy); color:var(--gold); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; padding:3px 10px; border-radius:6px; }
+.qlvl { font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; }
+.qlvl.easy   { background:#DCFCE7; color:#15803D; }
+.qlvl.medium { background:#FEF9C3; color:#A16207; }
+.qlvl.hard   { background:#FEE2E2; color:#B91C1C; }
+.qcat { font-size:10px; color:var(--mid); background:var(--gray); padding:3px 8px; border-radius:6px; }
+.qtxt { font-family:'Syne',sans-serif; font-size:clamp(15px,3.5vw,20px); font-weight:700; color:var(--dark); line-height:1.5; margin-bottom:20px; white-space:pre-line; }
+
+.choices { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+.cbtn { display:flex; align-items:flex-start; gap:14px; background:var(--white); border:2px solid var(--gray); border-radius:14px; padding:14px 18px; cursor:pointer; text-align:left; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--dark); line-height:1.4; transition:border-color .15s,background .15s,transform .1s; width:100%; }
+.cbtn:hover:not(:disabled) { border-color:var(--lblue); background:#EEF3FF; transform:translateX(3px); }
+.cbtn:disabled { cursor:default; }
+.cbtn.correct { border-color:var(--green); background:var(--greenl); }
+.cbtn.wrong   { border-color:var(--red);   background:var(--redl); }
+.cletter { flex-shrink:0; width:30px; height:30px; border-radius:50%; background:var(--gray); font-family:'Syne',sans-serif; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; color:var(--mid); }
+.cbtn.correct .cletter { background:var(--green); color:var(--white); }
+.cbtn.wrong   .cletter { background:var(--red);   color:var(--white); }
+
+.txt-ans-wrap { margin-bottom:24px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.txt-ans-inp { background:var(--white); border:2px solid var(--gray); border-radius:12px; padding:14px 18px; font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:var(--dark); outline:none; transition:border-color .2s; text-align:center; letter-spacing:2px; width:180px; }
+.txt-ans-inp:focus  { border-color:var(--lblue); }
+.txt-ans-inp.correct{ border-color:var(--green); background:var(--greenl); }
+.txt-ans-inp.wrong  { border-color:var(--red);   background:var(--redl); }
+.btn-cek { background:var(--navy); color:var(--white); font-family:'Syne',sans-serif; font-size:14px; font-weight:700; padding:14px 24px; border:none; border-radius:12px; cursor:pointer; transition:background .15s; }
+.btn-cek:hover { background:var(--blue); }
+
+.fbbox { border-radius:12px; padding:14px 18px; font-size:14px; line-height:1.6; margin-bottom:20px; display:none; }
+.fbbox.correct { background:var(--greenl); color:var(--green); border:1px solid #BBF7D0; }
+.fbbox.wrong   { background:var(--redl);   color:var(--red);   border:1px solid #FECACA; }
+.btn-next { background:var(--navy); color:var(--white); font-family:'Syne',sans-serif; font-size:14px; font-weight:700; padding:14px 36px; border:none; border-radius:12px; cursor:pointer; display:none; transition:transform .15s,background .15s; }
+.btn-next:hover { background:var(--blue); transform:translateY(-1px); }
+
+/* ── RESULT ── */
+#screen-result { background:var(--navy); align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
+.res-badge { width:100px; height:100px; border-radius:50%; background:rgba(212,168,67,.15); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:48px; margin:0 auto 24px; }
+.res-score { font-family:'Syne',sans-serif; font-size:clamp(56px,15vw,88px); font-weight:800; color:var(--gold); line-height:1; }
+.res-score-sub { font-size:15px; color:rgba(255,255,255,.4); margin-bottom:4px; }
+.res-msg { font-family:'Syne',sans-serif; font-size:clamp(18px,4.5vw,26px); font-weight:800; color:var(--white); margin:12px 0 6px; }
+.res-sub { font-size:14px; color:rgba(255,255,255,.45); max-width:420px; margin:0 auto 28px; line-height:1.6; }
+.res-stats { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
+.rstat { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px 20px; }
+.rstat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:24px; }
+.rstat-num.g{color:#4ADE80;}.rstat-num.r{color:#F87171;}.rstat-num.go{color:var(--gold);}
+.rstat-lbl { font-size:11px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+.wpt-tbl { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:18px 20px; max-width:420px; margin:0 auto 24px; text-align:left; }
+.wpt-tbl h4 { font-family:'Syne',sans-serif; font-size:13px; color:var(--gold); margin-bottom:12px; }
+.wpt-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:13px; color:rgba(255,255,255,.55); }
+.wpt-row:last-child { border-bottom:none; }
+.wpt-row.hl { color:var(--gold); font-weight:700; }
+
+.timeout-banner { background:rgba(185,28,28,.15); border:1px solid rgba(185,28,28,.4); border-radius:10px; padding:10px 20px; color:#FCA5A5; font-size:13px; font-weight:600; margin-bottom:20px; display:none; }
+.review-list { width:100%; max-width:640px; text-align:left; margin-top:28px; }
+.rev-item { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:14px 18px; margin-bottom:10px; }
+.rev-q { font-size:13px; color:rgba(255,255,255,.65); margin-bottom:6px; line-height:1.4; white-space:pre-line; }
+.rev-a { font-size:12px; font-weight:600; }
+.rev-a.ok{color:#4ADE80;}.rev-a.err{color:#F87171;}
+
+@media(max-width:480px){ .pbwrap{display:none;} .txt-ans-wrap{flex-direction:column;align-items:flex-start;} }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ 1: ADMIN LOGIN ══════════════════ -->
+<div id="screen-admin-login" class="screen sc active">
+  <div class="badge">● PT. KPUS Assessment System</div>
+  <div class="sub">Panel Administrator. Masukkan password untuk membuka sistem.</div>
+  <div class="card">
+    <div class="clabel">Password Administrator</div>
+    <input type="password" id="admin-pw-inp" class="inp" placeholder="Password admin..."
+      onkeydown="if(event.key==='Enter')adminLogin()">
+    <div class="errmsg" id="admin-pw-err"></div>
+  </div>
+  <button class="btn-gold" onclick="adminLogin()">Masuk →</button>
+  <button class="btn-ghost" onclick="showScreen('screen-kode')">Saya Peserta — Punya Kode →</button>
+</div>
+
+<!-- ══════════════════ 2: ADMIN PANEL ══════════════════ -->
+<div id="screen-admin" class="screen">
+  <div class="admin-header">
+    <div>
+      <div class="admin-header-title">⚙️ Admin Panel PT. KPUS</div>
+      <div class="admin-header-sub">Generate kode akses untuk peserta</div>
+    </div>
+    <button class="btn-logout" onclick="adminLogout()">Keluar</button>
+  </div>
+
+  <div class="admin-wrap">
+    <div class="sec-title">Generate Kode Akses Peserta</div>
+    <div class="gen-box">
+      <div class="gen-fields">
+        <input type="text" id="gen-nama"    class="inp-light" placeholder="Nama lengkap peserta...">
+        <input type="text" id="gen-jabatan" class="inp-light" placeholder="Jabatan / posisi...">
+      </div>
+      <button class="btn-gen" onclick="generateKode()">🔑 Generate Kode &amp; Kirim Email</button>
+
+      <div class="code-result" id="code-result">
+        <div class="cr-label">Kode Akses</div>
+        <div class="cr-name" id="cr-peserta">—</div>
+        <div class="cr-kode" id="cr-kode">——</div>
+        <div class="cr-btns">
+          <button class="btn-copy" onclick="copyKode()">📋 Copy Kode</button>
+          <button class="btn-wa"   onclick="kirimWA()">💬 Kirim WA</button>
+        </div>
+        <div class="cr-note">Berlaku 3 jam · Email notif terkirim ke <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee869c8a898f838b83819c878f82ae89838f8782c08d8183">[email&#160;protected]</a></div>
+      </div>
+    </div>
+
+    <div class="sec-title">Log Kode Akses</div>
+    <div class="log-wrap">
+      <table class="log-tbl">
+        <thead>
+          <tr><th>Nama</th><th>Jabatan</th><th>Kode</th><th>Status</th></tr>
+        </thead>
+        <tbody id="log-body">
+          <tr><td colspan="4" class="empty-log">Belum ada kode yang dibuat</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ 3: PESERTA — MASUKKAN KODE ══════════════════ -->
+<div id="screen-kode" class="screen sc">
+  <div class="badge">● PT. KPUS Assessment System</div>
+  <div class="ttl">Masukkan<span class="ac">Kode Akses</span></div>
+  <div class="sub">Masukkan data Anda dan kode akses yang diberikan administrator.</div>
+  <div class="card">
+    <div class="clabel">Data Peserta</div>
+    <input type="text" id="p-nama"    class="inp" placeholder="Nama lengkap Anda...">
+    <input type="text" id="p-jabatan" class="inp" placeholder="Jabatan / posisi...">
+    <div class="clabel" style="margin-top:14px;">Kode Akses (6 Karakter)</div>
+    <input type="text" id="p-kode" class="inp"
+      placeholder="Contoh: AB12CD" maxlength="6"
+      style="text-transform:uppercase;letter-spacing:4px;font-size:20px;font-family:'Syne',sans-serif;font-weight:700;text-align:center;"
+      oninput="this.value=this.value.toUpperCase()"
+      onkeydown="if(event.key==='Enter')pesertaMasuk()">
+    <div class="errmsg" id="kode-err"></div>
+  </div>
+  <button class="btn-gold" onclick="pesertaMasuk()">Lanjut →</button>
+  <button class="btn-ghost" onclick="showScreen('screen-admin-login')">← Admin</button>
+</div>
+
+<!-- ══════════════════ 4: INTRO ══════════════════ -->
+<div id="screen-intro" class="screen sc">
+  <div class="badge">● PT. KPUS Assessment System</div>
+  
+  <div class="sub">Tes kemampuan memecahkan masalah. Kerjakan semampu Anda — jangan terlalu lama di satu soal.</div>
+  <div class="stats-row">
+    <div class="stat-pill"><div class="stat-num">50</div><div class="stat-lbl">Soal</div></div>
+    <div class="stat-pill"><div class="stat-num">12'</div><div class="stat-lbl">Waktu</div></div>
+    <div class="stat-pill"><div class="stat-num">5</div><div class="stat-lbl">Tipe</div></div>
+  </div>
+  <div class="card" style="text-align:left;max-width:460px;">
+    <div class="clabel">Petunjuk</div>
+    <p style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;">
+      • Soal bertahap dari mudah ke sulit<br>
+      • Tidak harus menjawab semua soal<br>
+      • Waktu <strong style="color:var(--gold)">12 menit</strong> — tidak bisa dijeda setelah mulai<br>
+      • Tanpa kalkulator atau alat bantu hitung
+    </p>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);">
+      <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Peserta</div>
+      <div id="intro-nama" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white);"></div>
+      <div id="intro-jabatan" style="font-size:13px;color:rgba(255,255,255,.4);margin-top:2px;"></div>
+    </div>
+  </div>
+  <button class="btn-gold" onclick="startQuiz()">Mulai Tes Sekarang →</button>
+</div>
+
+<!-- ══════════════════ 5: QUIZ ══════════════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="qhdr">
+    <div>
+      <div class="qhdr-sub" id="hdr-name"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div>
+        <div class="pbwrap"><div class="pbfill" id="pb-fill" style="width:0%"></div></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;text-align:right;" id="pb-txt">0/50</div>
+      </div>
+      <div class="timer-block">
+        <div class="timer-lbl">Sisa Waktu</div>
+        <div class="timer-val" id="timer-val">12:00</div>
+      </div>
+    </div>
+  </div>
+  <div class="qbody">
+    <div class="qmeta">
+      <span class="qcounter" id="q-counter">Soal 1 dari 50</span>
+      <span class="qtag" id="q-tag">SOAL #1</span>
+      <span class="qlvl" id="q-lvl">Mudah</span>
+      <span class="qcat" id="q-cat">Kosakata</span>
+    </div>
+    <div class="qtxt" id="q-txt"></div>
+    <div class="choices" id="choices" style="display:none;"></div>
+    <div class="txt-ans-wrap" id="txt-wrap" style="display:none;">
+      <input type="text" id="txt-inp" class="txt-ans-inp" placeholder="Jawaban..."
+        autocomplete="off" onkeydown="if(event.key==='Enter')cekTeks()">
+      <button class="btn-cek" id="btn-cek" onclick="cekTeks()">Cek ✓</button>
+    </div>
+    <div class="fbbox" id="fbbox"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Lanjut →</button>
+  </div>
+</div>
+
+<!-- ══════════════════ 6: RESULT ══════════════════ -->
+<div id="screen-result" class="screen sc">
+  <div id="timeout-banner" class="timeout-banner">⏰ Waktu 12 menit habis — tes dihentikan otomatis.</div>
+  <div class="res-badge" id="res-emoji">🏆</div>
+  <div class="res-msg" id="res-msg">Tes Selesai!</div>
+  <div class="res-sub" id="res-sub"></div>
+  <span id="res-score" style="display:none">0</span>
+  <span id="res-total" style="display:none">50</span>
+  <span id="rstat-benar" style="display:none">0</span>
+  <span id="rstat-salah" style="display:none">0</span>
+  <span id="rstat-waktu" style="display:none">—</span>
+  <span id="wr0" style="display:none"></span><span id="wr1" style="display:none"></span>
+  <span id="wr2" style="display:none"></span><span id="wr3" style="display:none"></span>
+  <span id="wr4" style="display:none"></span><span id="wr5" style="display:none"></span>
+  <div class="review-list" id="review-list" style="display:none;"></div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script>
+// ══════════════════════════════════════════════════════
+// CONFIG — ganti URL setelah deploy Apps Script
+// ══════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3FX4kfqqih8mrrQV09AKXVcfqfepBBGG7FcaNzd3OXzVbSk5VI7fdCVsUCepU-zRw/exec';
+const ADMIN_PASSWORD  = 'LMP2025wpt';   // ← ganti sesuai keinginan Anda
+
+// ══════════════════════════════════════════════════════
+// BANK SOAL — 50 soal WPT, angka diacak dari aslinya
+// Urutan: level 1 (mudah) → level 2 (sedang) → level 3 (sulit)
+// type MC = pilihan ganda | TEXT = isian angka/kata
+// ══════════════════════════════════════════════════════
+const BANK = [
+// ── LEVEL 1: MUDAH ──────────────────────────────────
+{id:1,lv:1,type:'MC',cat:'Pengetahuan Umum',
+ q:'Dua bulan yang lalu, sebelum pertengahan tahun, adalah bulan...',
+ c:['Maret','April','Mei','Juni','Juli'], a:1,
+ exp:'Pertengahan tahun = Juli. Dua bulan sebelum Juli = Mei. Jawaban: Mei.'},
+{id:2,lv:1,type:'MC',cat:'Antonim',
+ q:'MENANGKAP adalah lawan kata dari',
+ c:['meletakkan','membebaskan','berisiko','berusaha','turun tingkat'], a:1,
+ exp:'Lawan MENANGKAP = MEMBEBASKAN — satu menahan, satu melepaskan.'},
+{id:3,lv:1,type:'MC',cat:'Klasifikasi',
+ q:'Sebagian besar kata berikut satu kelompok. Manakah yang BERBEDA?',
+ c:['Januari','Agustus','Rabu','Oktober','Desember'], a:2,
+ exp:'"Rabu" adalah nama hari, sedangkan yang lain adalah nama bulan.'},
+{id:4,lv:1,type:'MC',cat:'Pengetahuan Umum',
+ q:'RSVP dalam undangan berarti:',
+ c:['Hadir tanpa konfirmasi','Mohon konfirmasi kehadiran Anda','Undangan tidak resmi','Tamu bebas datang','Jawab jika tidak hadir'], a:1,
+ exp:'RSVP = "Répondez s\'il vous plaît" (Prancis) = Mohon konfirmasi kehadiran.'},
+{id:5,lv:1,type:'MC',cat:'Klasifikasi',
+ q:'Manakah kata yang BERBEDA dari kelompok berikut?',
+ c:['pasukan','liga','berpartisipasi','regu','kelompok'], a:2,
+ exp:'"Berpartisipasi" adalah kata kerja, sedangkan yang lain adalah kata benda kelompok.'},
+{id:6,lv:1,type:'MC',cat:'Antonim',
+ q:'BIASA adalah lawan kata dari',
+ c:['jarang','terbiasa','tetap','berhenti','selalu'], a:0,
+ exp:'Lawan BIASA (sering terjadi) = JARANG.'},
+{id:7,lv:1,type:'MC',cat:'Persamaan Kata',
+ q:'"KLIEN" dan "PELANGGAN" — apakah dua kata ini:',
+ c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'], a:0,
+ exp:'Klien dan Pelanggan bermakna sama — orang yang menggunakan jasa/produk.'},
+{id:8,lv:1,type:'MC',cat:'Pola Angka',
+ q:'Angka berapa yang selanjutnya dalam urutan ini?\n16  8  4  2  1  ½  ...',
+ c:['¼','⅛','0','⅓','1/5'], a:0,
+ exp:'Setiap angka dibagi 2: …1÷2=½, ½÷2=¼.'},
+{id:9,lv:1,type:'MC',cat:'Antonim',
+ q:'JAUH adalah lawan kata dari',
+ c:['terpencil','dekat','jarang','terburu-buru','pasti'], a:1,
+ exp:'Lawan JAUH = DEKAT.'},
+{id:10,lv:1,type:'MC',cat:'Silogisme',
+ q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"Anak-anak ini adalah anak normal. Semua anak normal sifatnya aktif. Anak-anak ini aktif."',
+ c:['Benar','Salah','Tidak Tahu'], a:0,
+ exp:'Semua anak normal = aktif. Anak-anak ini normal → pasti aktif. BENAR.'},
+{id:11,lv:1,type:'MC',cat:'Antonim',
+ q:'MUSIM GUGUR adalah lawan dari',
+ c:['liburan','musim panas','musim semi','musim dingin','akhir tahun'], a:2,
+ exp:'Gugur (Sept–Nov) lawannya Musim Semi (Mar–Mei) — satu layu, satu tumbuh.'},
+{id:12,lv:1,type:'TEXT',cat:'Aritmatika',
+ q:'Sebuah pesawat terbang 400 kaki dalam ½ detik.\nPada kecepatan sama, berapa kaki dalam 10 detik?',
+ a:'8000', alt:['8.000','8,000'],
+ exp:'400 per ½ detik = 800 per detik. × 10 = 8.000 kaki.'},
+{id:13,lv:1,type:'MC',cat:'Silogisme',
+ q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"John seusia Sally. Sally lebih muda dari Budi. John lebih muda dari Budi."',
+ c:['Benar','Salah','Tidak Tahu'], a:0,
+ exp:'John=Sally (usia sama). Sally<Budi. Maka John<Budi. BENAR.'},
+{id:14,lv:1,type:'TEXT',cat:'Aritmatika',
+ q:'4 permen seharga Rp 12. Berapa harga ½ lusin (6 buah)?',
+ a:'18', alt:['Rp18','Rp 18','18 rupiah'],
+ exp:'Rp12÷4 = Rp3/buah. ×6 = Rp18.'},
+// ── LEVEL 2: SEDANG ──────────────────────────────────
+{id:15,lv:2,type:'TEXT',cat:'Duplikasi',
+ q:'Berapa pasangan angka yang IDENTIK?\n\n73841   —   73841\n8105492  —  8105492\n19302012  —  19302021\n85901190  —  85901190\n77775555  —  77775555',
+ a:'4', alt:['empat'],
+ exp:'Pasangan 1, 2, 4, 5 identik. Pasangan 3 beda (012 vs 021). Total = 4.'},
+{id:16,lv:2,type:'MC',cat:'Susunan Kalimat',
+ q:'Susun menjadi kalimat benar. Huruf TERAKHIR dari kata TERAKHIR adalah jawaban:\n\n"memiliki kalimat suatu kerja kata selalu sebuah"',
+ c:['A','U','I','N','K'], a:0,
+ exp:'Kalimat: "Sebuah kalimat selalu memiliki kata kerja." Kata terakhir: "kerja" → huruf terakhir: A.'},
+{id:17,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Anak lelaki berumur 6 tahun, saudara perempuannya 2× lebih tua.\nKetika anak lelaki berumur 9, berapa umur saudaranya?',
+ a:'15', alt:['15 tahun'],
+ exp:'Saudara = 12 tahun. Selisih = 6 tahun. 9+6 = 15 tahun.'},
+{id:18,lv:2,type:'MC',cat:'Persamaan Kata',
+ q:'"IT\'S" dan "ITS" — apakah dua kata ini:',
+ c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'], a:2,
+ exp:'"It\'s" = singkatan "it is". "Its" = miliknya. Berbeda, tidak berlawanan.'},
+{id:19,lv:2,type:'MC',cat:'Silogisme',
+ q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"Semua siswa ikut ujian. Beberapa orang di ruangan ini adalah siswa. Beberapa orang di ruangan ini ikut ujian."',
+ c:['Benar','Salah','Tidak Tahu'], a:0,
+ exp:'Semua siswa ikut ujian. Beberapa di ruangan = siswa → beberapa di ruangan pasti ikut ujian. BENAR.'},
+{id:20,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Pedagang beli beberapa barrel total Rp 5.000. Jual Rp 6.000, untung Rp 50/barrel. Berapa barrel?',
+ a:'20', alt:['20 barrel','dua puluh'],
+ exp:'Untung total = Rp1.000. Per barrel = Rp50. 1.000÷50 = 20 barrel.'},
+{id:21,lv:2,type:'MC',cat:'Susunan Kalimat',
+ q:'Susun menjadi kalimat. Jika BENAR tulis B, jika SALAH tulis S:\n\n"semua menghasilkan telur ayam"',
+ c:['B — Benar','S — Salah'], a:1,
+ exp:'"Semua ayam menghasilkan telur" — salah, ayam jantan tidak bertelur. Jawaban: S.'},
+{id:22,lv:2,type:'MC',cat:'Peribahasa',
+ q:'Dua peribahasa berikut memiliki makna SERUPA. Manakah?',
+ c:['Anak seperti ayahnya / Mereka dari sumber yang sama','Semakin banyak sapi semakin banyak anak sapi buruk / Bila tertinggal sejauh satu mil','Seorang dikenal dari pergaulannya / Mereka dari sumber yang sama','Anak seperti ayahnya / Bila tertinggal sejauh satu mil','Batu berguling tidak kumpulkan lumut / Ini ketidakmungkinan'], a:0,
+ exp:'"Anak seperti ayahnya" dan "Mereka dari sumber yang sama" = asal-usul menentukan karakter.'},
+{id:23,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Sebuah jam terlambat 1 menit 30 detik dalam 45 hari.\nBerapa detik terlambat dalam sehari?',
+ a:'2', alt:['2 detik','dua'],
+ exp:'1 menit 30 detik = 90 detik. 90÷45 = 2 detik/hari.'},
+{id:24,lv:2,type:'MC',cat:'Persamaan Kata',
+ q:'"CANVAS" dan "CANVASS" — apakah dua kata ini:',
+ c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'], a:2,
+ exp:'"Canvas" = kain kanvas. "Canvass" = kampanye/survei. Berbeda, tidak berlawanan.'},
+{id:25,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Dalam 28 hari seseorang menabung Rp 700.\nBerapa rata-rata tabungan per hari?',
+ a:'25', alt:['Rp25','25 rupiah','Rp 25'],
+ exp:'700÷28 = 25 rupiah/hari.'},
+{id:26,lv:2,type:'MC',cat:'Persamaan Kata',
+ q:'"DAPAT DIPERCAYA" dan "MUDAH PERCAYA" — apakah dua frasa ini:',
+ c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'], a:2,
+ exp:'"Dapat dipercaya" = orang andal. "Mudah percaya" = gampang percaya orang lain. Berbeda, tidak berlawanan.'},
+{id:27,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Dua orang menangkap 42 ikan. X menangkap 6× lebih banyak dari Y. Berapa ikan Y?',
+ a:'6', alt:['6 ekor','enam'],
+ exp:'X=6Y. 6Y+Y=42 → 7Y=42 → Y=6.'},
+{id:28,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Kotak persegi panjang memuat 900 kubik kaki. Lebar 9 kaki, panjang 10 kaki. Berapa kedalaman?',
+ a:'10', alt:['10 kaki'],
+ exp:'900 = 10×9×t → t = 10 kaki.'},
+{id:29,lv:2,type:'MC',cat:'Pola Angka',
+ q:'Satu angka dalam rangkaian ini TIDAK sesuai pola. Mana?\n\n½  ¼  1/6  1/8  1/9  1/12',
+ c:['½','¼','1/6','1/9','1/12'], a:3,
+ exp:'Pola: penyebut genap (2,4,6,8,10,12). Yang tidak cocok: 1/9 (penyebut 9 = ganjil).'},
+{id:30,lv:2,type:'MC',cat:'Pengetahuan Umum',
+ q:'Apakah "p.m." singkatan dari "post meridiem"?',
+ c:['Ya, benar','Tidak, salah'], a:0,
+ exp:'"p.m." = post meridiem (Latin) = setelah tengah hari.'},
+{id:31,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Sebuah rok butuh 2½ meter kain. Berapa rok dari 45 meter kain?',
+ a:'18', alt:['18 potong','delapan belas'],
+ exp:'45÷2.5 = 18 rok.'},
+{id:32,lv:2,type:'TEXT',cat:'Aritmatika',
+ q:'Tim kalah 9 pertandingan musim ini = 3/8 dari semua pertandingan.\nBerapa total pertandingan?',
+ a:'24', alt:['24 pertandingan'],
+ exp:'9 = 3/8 × total → total = 9×8÷3 = 24.'},
+{id:33,lv:2,type:'MC',cat:'Pola Angka',
+ q:'Angka selanjutnya dari seri ini?\n\n1  0.5  0.25  0.125  ...',
+ c:['0.0625','0.05','0.1','0.025','0.5'], a:0,
+ exp:'Setiap angka ÷2: 0.125÷2 = 0.0625.'},
+// ── LEVEL 3: SULIT ───────────────────────────────────
+{id:34,lv:3,type:'MC',cat:'Peribahasa',
+ q:'Dua peribahasa berikut memiliki makna SERUPA. Manakah?',
+ c:['Tidak bisa buat dompet sutra dari telinga babi / Tidak bisa hancurkan kapal yang sudah rusak','Orang yang curi telur akan curi sapi / Batu berguling tidak kumpulkan lumut','Tidak bisa hancurkan kapal rusak / Ini ketidakmungkinan yang terjadi','Anak seperti ayahnya / Orang dikenal dari pergaulannya','Batu berguling / Ketidakmungkinan'], a:2,
+ exp:'"Tidak bisa menghancurkan yang sudah rusak" dan "Ketidakmungkinan terjadi" = sesuatu yang sudah buruk tidak bisa diperburuk lagi.'},
+{id:35,lv:3,type:'TEXT',cat:'Duplikasi',
+ q:'Berapa pasangan nama yang IDENTIK?\n\nRexford, J.D.   — Rockford, J.D.\nSingleton, M.O. — Simbleten, M.O.\nRichards, W.E.  — Richad, W.E.\nSiegel, A.B.    — Seigel, A.B.\nWood, A.O.      — Wood, A.O.',
+ a:'1', alt:['satu','1 pasang'],
+ exp:'Hanya Wood, A.O. yang identik. Pasangan lain berbeda ejaan.'},
+{id:36,lv:3,type:'MC',cat:'Angka Terkecil',
+ q:'Manakah angka yang TERKECIL?\n\n10   1   0.999   0.33   11',
+ c:['10','1','0.999','0.33','11'], a:3,
+ exp:'0.33 < 0.999 < 1 < 10 < 11. Jawaban: 0.33.'},
+{id:37,lv:3,type:'MC',cat:'Persamaan Makna',
+ q:'Apakah makna kedua kalimat ini: Sama, Berlawanan, atau Tidak sama/berlawanan?\n\n"Sapu baru menyapu bersih."\n"Sepatu lama terasa makin nyaman."',
+ c:['Sama','Berlawanan','Tidak sama atau berlawanan'], a:1,
+ exp:'Sapu baru = hal baru lebih baik. Sepatu lama = hal lama lebih nyaman. Berlawanan.'},
+{id:38,lv:3,type:'MC',cat:'Klasifikasi',
+ q:'Manakah kata yang BERBEDA dari yang lain?\n\nkoloni  persekutuan  kawanan  kru  konstelasi',
+ c:['koloni','persekutuan','kawanan','kru','konstelasi'], a:4,
+ exp:'"Konstelasi" = kelompok bintang (benda langit), yang lain = kelompok makhluk hidup.'},
+{id:39,lv:3,type:'MC',cat:'Silogisme',
+ q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"Orang berpengaruh sering ditipu. Saya sering ditipu. Saya adalah orang berpengaruh."',
+ c:['Benar','Salah','Tidak Tahu'], a:2,
+ exp:'Tidak semua yang ditipu adalah orang berpengaruh. Tidak cukup bukti. TIDAK TAHU.'},
+{id:40,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Untuk cetak artikel 30.000 kata, dipakai 2 ukuran teks:\n• Teks besar: 1.200 kata/halaman\n• Teks kecil: 1.500 kata/halaman\nTotal: 22 halaman. Berapa halaman teks KECIL?',
+ a:'12', alt:['12 halaman','dua belas'],
+ exp:'Misalkan x = halaman kecil. 1500x + 1200(22−x) = 30000 → 300x = 3600 → x = 12.'},
+{id:41,lv:3,type:'MC',cat:'Persamaan Makna',
+ q:'Apakah makna kedua kalimat ini: Sama, Berlawanan, atau Tidak sama/berlawanan?\n\n"Tidak ada orang jujur meminta maaf atas kejujurannya."\n"Kejujuran dihormati namun lapar pujian."',
+ c:['Sama','Berlawanan','Tidak sama atau berlawanan'], a:2,
+ exp:'Kalimat pertama: orang jujur tidak minta maaf. Kalimat kedua: kejujuran dihargai tapi jarang dipuji. Berbeda fokus, tidak sama dan tidak berlawanan.'},
+{id:42,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Pipa A mengisi kolam dalam 4 jam. Pipa B menguras dalam 6 jam.\nJika keduanya jalan bersamaan (kolam kosong), berapa jam kolam penuh?',
+ a:'12', alt:['12 jam'],
+ exp:'Net = 1/4 − 1/6 = 1/12 per jam. Waktu penuh = 12 jam.'},
+{id:43,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Rata-rata 5 angka adalah 18.\n4 angka pertama: 12, 15, 22, 25.\nBerapa angka kelima?',
+ a:'16', alt:['enam belas'],
+ exp:'Total = 5×18 = 90. Empat angka = 74. Kelima = 90−74 = 16.'},
+{id:44,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Keran bocor 2 liter/jam. Tangki 50 liter sudah 80% penuh. Tidak diisi ulang.\nBerapa jam hingga tangki kosong?',
+ a:'20', alt:['20 jam'],
+ exp:'Isi = 80%×50 = 40 liter. 40÷2 = 20 jam.'},
+{id:45,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'A selesaikan pekerjaan dalam 10 hari. B dalam 15 hari.\nJika bekerja bersama, berapa hari selesai?',
+ a:'6', alt:['6 hari','enam'],
+ exp:'1/10 + 1/15 = 5/30 = 1/6. Waktu = 6 hari.'},
+{id:46,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Toko beri diskon 25%, lalu diskon tambahan 20%.\nHarga awal Rp 100.000. Berapa harga akhir?',
+ a:'60000', alt:['Rp60000','60.000','Rp 60.000'],
+ exp:'100.000×0.75 = 75.000. 75.000×0.80 = 60.000.'},
+{id:47,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'3 orang bagi keuntungan RATA. X investasi Rp4.500, Y Rp3.500, Z Rp2.000.\nKeuntungan Rp1.500. Berapa yang diterima X jika dibagi RATA?',
+ a:'500', alt:['Rp500','Rp 500'],
+ exp:'Dibagi rata 3 orang = Rp1.500÷3 = Rp500 per orang.'},
+{id:48,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Harga grosir kardus 12 lusin Rp 2.400. 2 lusin busuk sebelum terjual.\nJual per lusin berapa agar untung 1/3 dari harga beli?',
+ a:'320', alt:['Rp320','Rp 320'],
+ exp:'Target jual = 2400×(1+1/3) = Rp3.200. Yang terjual 10 lusin. 3200÷10 = Rp320/lusin.'},
+{id:49,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Jam terlambat 26 detik dalam 50 jam. Berapa detik terlambat per ½ jam?',
+ a:'0.26', alt:['0,26','¼'],
+ exp:'26÷50 = 0.52 detik/jam. Per ½ jam = 0.26 detik ≈ ¼ detik.'},
+{id:50,lv:3,type:'TEXT',cat:'Aritmatika',
+ q:'Sebuah rok butuh 2¼ meter kain. Ada 45 meter. Berapa rok yang bisa dibuat?',
+ a:'20', alt:['dua puluh','20 potong'],
+ exp:'45÷2.25 = 20 rok.'},
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let userData={nama:'',jabatan:'',kode:''};
+let questions=[], currentIdx=0, score=0, answers=[];
+let timerInt=null, secondsLeft=720, answered=false, timedOut=false, quizEnded=false;
+let adminLoggedIn=false;
+let kodeLog=[]; // log kode di memory (session)
+let currentKode='', currentGenNama='', currentGenJabatan='';
+
+// ══════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function genKode(){
+  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');
+}
+function showToast(msg,ok=true){
+  let t=document.getElementById('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';
+    t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:13px 26px;border-radius:12px;font-family:Syne,sans-serif;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.3);transition:opacity .4s;';
+    document.body.appendChild(t);}
+  t.textContent=msg;t.style.background=ok?'#15803D':'#B91C1C';t.style.color='#fff';t.style.opacity='1';
+  clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',4000);
+}
+
+// ══════════════════════════════════════════════════════
+// ADMIN LOGIN
+// ══════════════════════════════════════════════════════
+function adminLogin(){
+  const v=document.getElementById('admin-pw-inp').value;
+  const err=document.getElementById('admin-pw-err');
+  if(v===ADMIN_PASSWORD){
+    adminLoggedIn=true;
+    document.getElementById('admin-pw-inp').value='';
+    err.textContent='';
+    renderLog();
+    showScreen('screen-admin');
+  } else {
+    err.textContent='✗ Password salah.';
+    setTimeout(()=>err.textContent='',3000);
+  }
+}
+function adminLogout(){adminLoggedIn=false;showScreen('screen-admin-login');}
+
+// ══════════════════════════════════════════════════════
+// GENERATE KODE
+// ══════════════════════════════════════════════════════
+function generateKode(){
+  const nama=document.getElementById('gen-nama').value.trim();
+  const jabatan=document.getElementById('gen-jabatan').value.trim();
+  if(!nama){showToast('✗ Nama peserta wajib diisi.',false);return;}
+
+  const kode=genKode();
+  currentKode=kode; currentGenNama=nama; currentGenJabatan=jabatan;
+  const ts=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
+
+  // Tampilkan kode di layar
+  document.getElementById('cr-peserta').textContent=nama+(jabatan?' — '+jabatan:'');
+  document.getElementById('cr-kode').textContent=kode;
+  document.getElementById('code-result').classList.add('show');
+
+  // Simpan ke log lokal
+  kodeLog.push({nama,jabatan,kode,ts,used:false});
+  renderLog();
+
+  // Kirim ke Apps Script (log + email ke hrdgamemorial@gmail.com)
+  kirimKeServer({action:'generateKode',nama,jabatan,kode,timestamp:ts});
+  showToast('✅ Kode dibuat & email terkirim ke hrdgamemorial@gmail.com');
+}
+
+function copyKode(){
+  navigator.clipboard.writeText(currentKode).then(()=>showToast('📋 Kode '+currentKode+' disalin!'));
+}
+function kirimWA(){
+  const teks=`Halo ${currentGenNama}, berikut kode akses tes seleksi Anda:\n\n*${currentKode}*\n\nMasukkan kode ini di halaman tes. Berlaku 3 jam.`;
+  window.open('https://wa.me/?text='+encodeURIComponent(teks),'_blank');
+}
+
+function renderLog(){
+  const tbody=document.getElementById('log-body');
+  if(kodeLog.length===0){
+    tbody.innerHTML='<tr><td colspan="4" class="empty-log">Belum ada kode yang dibuat</td></tr>';
+    return;
+  }
+  tbody.innerHTML=kodeLog.slice().reverse().map(k=>
+    `<tr>
+      <td>${k.nama}</td>
+      <td>${k.jabatan||'—'}</td>
+      <td><strong style="font-family:Syne,sans-serif;letter-spacing:2px;">${k.kode}</strong></td>
+      <td>${k.used?'<span class="tag-used">✅ Dipakai</span>':'<span class="tag-fresh">⏳ Belum</span>'}</td>
+    </tr>`
+  ).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// PESERTA MASUK KODE — validasi ke Apps Script [FIXED]
+// ══════════════════════════════════════════════════════
+function pesertaMasuk(){
+  const nama=document.getElementById('p-nama').value.trim();
+  const jabatan=document.getElementById('p-jabatan').value.trim();
+  const kode=document.getElementById('p-kode').value.toUpperCase().trim();
+  const err=document.getElementById('kode-err');
+  const btn=document.querySelector('#screen-kode .btn-gold');
+
+  if(!nama){err.textContent='✗ Nama wajib diisi.';return;}
+  if(!kode||kode.length!==6){err.textContent='✗ Kode harus 6 karakter.';return;}
+
+  // Tampilkan loading
+  err.textContent='';
+  btn.textContent='Memeriksa kode...';
+  btn.disabled=true;
+
+  // Cek dulu apakah kode ada di log lokal (mode offline / file lokal)
+  const localEntry=kodeLog.find(k=>k.kode===kode&&!k.used);
+  if(localEntry){
+    btn.textContent='Lanjut →';btn.disabled=false;
+    localEntry.used=true;renderLog();
+    userData={nama,jabatan,kode};
+    document.getElementById('intro-nama').textContent=nama;
+    document.getElementById('intro-jabatan').textContent=jabatan||'';
+    showScreen('screen-intro');return;
+  }
+
+  // Validasi ke Apps Script via fetch
+  const payload={action:'validateKode',kode};
+  const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),10000);
+
+  fetch(url,{signal:controller.signal})
+    .then(r=>r.json())
+    .then(res=>{
+      clearTimeout(timeout);
+      btn.textContent='Lanjut →';btn.disabled=false;
+      if(res.valid){
+        userData={nama,jabatan,kode};
+        document.getElementById('intro-nama').textContent=nama;
+        document.getElementById('intro-jabatan').textContent=jabatan||'';
+        const entry=kodeLog.find(k=>k.kode===kode);
+        if(entry)entry.used=true;
+        renderLog();
+        showScreen('screen-intro');
+      } else {
+        err.textContent='✗ '+(res.reason||'Kode tidak valid. Minta kode baru dari admin.');
+      }
+    })
+    .catch(e=>{
+      clearTimeout(timeout);
+      btn.textContent='Lanjut →';btn.disabled=false;
+      err.textContent='✗ '+(e.name==='AbortError'?'Server timeout.':'Gagal terhubung ke server.');
+    });
+}
+
+// ══════════════════════════════════════════════════════
+// START QUIZ
+// ══════════════════════════════════════════════════════
+function startQuiz(){
+  const easy  =shuffle(BANK.filter(q=>q.lv===1));
+  const medium=shuffle(BANK.filter(q=>q.lv===2));
+  const hard  =shuffle(BANK.filter(q=>q.lv===3));
+  const ordered=[...easy,...medium,...hard];
+
+  questions=ordered.map(q=>{
+    if(q.type==='MC'){
+      const idx=q.c.map((t,i)=>({t,i}));
+      const sh=shuffle(idx);
+      return{...q,c:sh.map(x=>x.t),a:sh.findIndex(x=>x.i===q.a)};
+    }
+    return{...q};
+  });
+
+  document.getElementById('hdr-name').textContent=userData.nama;
+  currentIdx=0;score=0;answers=[];secondsLeft=720;timedOut=false;answered=false;quizEnded=false;
+  showScreen('screen-quiz');
+  startTimer();renderQ();
+}
+
+// ══════════════════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════════════════
+function startTimer(){
+  clearInterval(timerInt);updateTimer();
+  timerInt=setInterval(()=>{secondsLeft--;updateTimer();if(secondsLeft<=0){clearInterval(timerInt);timedOut=true;endQuiz();}},1000);
+}
+function updateTimer(){
+  const el=document.getElementById('timer-val');
+  el.textContent=fmt(secondsLeft);
+  if(secondsLeft<=60){el.className='timer-val danger';}
+  else if(secondsLeft<=180){el.className='timer-val warn';}
+  else{el.className='timer-val';}
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER SOAL
+// ══════════════════════════════════════════════════════
+function renderQ(){
+  const q=questions[currentIdx];answered=false;
+  document.getElementById('q-counter').textContent=`Soal ${currentIdx+1} dari ${questions.length}`;
+  document.getElementById('q-tag').textContent=`SOAL #${currentIdx+1}`;
+  document.getElementById('pb-fill').style.width=(currentIdx/questions.length*100)+'%';
+  document.getElementById('pb-txt').textContent=`${currentIdx}/${questions.length}`;
+
+  const lvEl=document.getElementById('q-lvl');
+  lvEl.className='qlvl '+(q.lv===1?'easy':q.lv===2?'medium':'hard');
+  lvEl.textContent=q.lv===1?'Mudah':q.lv===2?'Sedang':'Sulit';
+  document.getElementById('q-cat').textContent=q.cat;
+  document.getElementById('q-txt').textContent=q.q;
+
+  document.getElementById('fbbox').style.display='none';
+  document.getElementById('fbbox').className='fbbox';
+  document.getElementById('btn-next').style.display='none';
+
+  if(q.type==='MC'){
+    document.getElementById('choices').style.display='flex';
+    document.getElementById('txt-wrap').style.display='none';
+    renderMC(q);
+  } else {
+    document.getElementById('choices').style.display='none';
+    document.getElementById('txt-wrap').style.display='flex';
+    const inp=document.getElementById('txt-inp');
+    inp.value='';inp.className='txt-ans-inp';inp.disabled=false;
+    document.getElementById('btn-cek').disabled=false;
+    setTimeout(()=>inp.focus(),150);
+  }
+}
+
+function renderMC(q){
+  const list=document.getElementById('choices');list.innerHTML='';
+  ['A','B','C','D','E'].slice(0,q.c.length).forEach((l,i)=>{
+    const btn=document.createElement('button');
+    btn.className='cbtn';
+    btn.innerHTML=`<span class="cletter">${l}</span><span>${q.c[i]}</span>`;
+    btn.onclick=()=>pickMC(i,btn,q);
+    list.appendChild(btn);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// JAWAB
+// ══════════════════════════════════════════════════════
+function pickMC(idx,btn,q){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.cbtn').forEach(b=>b.disabled=true);
+  const ok=idx===q.a;if(ok)score++;
+  tampilFeedback(ok,q.exp,q.c[idx],q.c[q.a]);
+  answers.push({q:q.q,chosen:q.c[idx],correct:q.c[q.a],ok,type:'MC'});
+}
+
+function cekTeks(){
+  if(answered)return;
+  const q=questions[currentIdx];
+  const inp=document.getElementById('txt-inp');
+  const val=inp.value.trim();
+  if(!val)return;
+  answered=true;inp.disabled=true;document.getElementById('btn-cek').disabled=true;
+  const all=[q.a.toString(),...(q.alt||[])].map(x=>x.toString().toLowerCase().trim());
+  const ok=all.includes(val.toLowerCase().trim());
+  if(ok)score++;
+  tampilFeedback(ok,q.exp,val,q.a.toString());
+  answers.push({q:q.q,chosen:val,correct:q.a.toString(),ok,type:'TEXT'});
+}
+
+function tampilFeedback(ok,exp,chosen,correct){
+  // Auto pindah ke soal berikutnya, tanpa tampilkan jawaban
+  setTimeout(()=>{
+    if(currentIdx+1<questions.length) nextQ();
+    else endQuiz();
+  }, 400);
+}
+
+function nextQ(){
+  currentIdx++;
+  if(currentIdx>=questions.length)endQuiz();
+  else{renderQ();window.scrollTo(0,0);}
+}
+
+// ══════════════════════════════════════════════════════
+// END QUIZ
+// ══════════════════════════════════════════════════════
+function endQuiz(){
+  if(quizEnded) return;  // ← GUARD: hanya jalan 1x
+  quizEnded=true;
+  clearInterval(timerInt);showScreen('screen-result');
+  const total=answers.length;
+  const persen=total>0?Math.round(score/total*100):0;
+  const grade=persen>=90?'A':persen>=75?'B':persen>=60?'C':persen>=40?'D':'E';
+  const persentil=score>=40?'>99%':score>=35?'~95%':score>=30?'~85%':score>=25?'~65%':score>=20?'~40%':score>=15?'~20%':'~10%';
+  const ts=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
+
+  // Kirim ke Google Sheet
+  kirimKeServer({
+    action:'submitResult',
+    timestamp:ts,
+    nama:userData.nama,jabatan:userData.jabatan,kode:userData.kode,
+    score,total,persen,grade,persentil,waktuTersisa:fmt(Math.max(0,secondsLeft))
+  });
+
+  // Tampilkan pesan selesai saja
+  document.getElementById('res-emoji').textContent='✅';
+  document.getElementById('res-msg').textContent='Tes Sudah Selesai';
+  document.getElementById('res-sub').textContent='Hasil tes sudah dikirim ke hrdgamemorial@gmail.com';
+}
+
+// ══════════════════════════════════════════════════════
+// KIRIM KE APPS SCRIPT
+// ══════════════════════════════════════════════════════
+const DISCORD_WEBHOOK='https://discord.com/api/webhooks/1493451394198536192/pQjW2Ajd61hKx3vyehKzeEmRll6YOwd5jSNPJ4SubQrh_yCpDXVoRP2JgOixtvmloxP3';
+
+function kirimKeServer(payload){
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE'))return;
+  const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
+  // Gunakan iframe — tidak ada CORS issue, fire-and-forget
+  const iframe=document.createElement('iframe');
+  iframe.style.display='none';
+  iframe.src=url;
+  iframe.onload=()=>{
+    setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} },3000);
+    if(payload.action==='submitResult'){
+      showToast('✅ Hasil tersimpan!');
+      kirimDiscord(payload);
+    }
+  };
+  iframe.onerror=()=>{ try{document.body.removeChild(iframe);}catch(e){} };
+  document.body.appendChild(iframe);
+  // Fallback toast setelah 5 detik
+  if(payload.action==='submitResult'){
+    setTimeout(()=>{
+      kirimDiscord(payload);
+      showToast('✅ Hasil terkirim!');
+    },5000);
+  }
+}
+
+function kirimDiscord(payload){
+  const ts=payload.timestamp||'';
+  const score=payload.score!==undefined?payload.score:'—';
+  const total=payload.total||50;
+  const grade=payload.grade||'—';
+  const kategori=score>=35?'Sangat Tinggi (Superior)':score>=30?'Tinggi':score>=25?'Di Atas Rata-Rata':score>=20?'Rata-Rata':score>=15?'Rata-Rata Bawah':'Di Bawah Rata-Rata';
+  const embed={embeds:[{
+    title:'📋 Hasil Tes Seleksi — Selesai',
+    color:0xD4A843,
+    fields:[
+      {name:'👤 Nama',      value:payload.nama    ||'—', inline:true},
+      {name:'💼 Jabatan',   value:payload.jabatan ||'—', inline:true},
+      {name:'📅 Tgl Test',  value:ts,                    inline:false},
+      {name:'🎯 Score',     value:'**'+score+' / '+total+'** — Grade **'+grade+'**', inline:false},
+      {name:'📝 Keterangan',value:kategori,              inline:false},
+      {name:'📧 Status',    value:'Hasil dikirim ke **hrdgamemorial@gmail.com**', inline:false}
+    ],
+    footer:{text:'PT. KPUS Assessment System'}
+  }]};
+  fetch(DISCORD_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(embed)}).catch(()=>{});
+}
+
+// ══════════════════════════════════════════════════════
+// RESET & REVIEW
+// ══════════════════════════════════════════════════════
+
+function resetAll(){
+  document.getElementById('p-nama').value='';
+  document.getElementById('p-jabatan').value='';
+  document.getElementById('p-kode').value='';
+  document.getElementById('timeout-banner').style.display='none';
+  document.getElementById('review-list').style.display='none';
+  showScreen('screen-kode');
+}
+function toggleReview(){
+  const rl=document.getElementById('review-list');
+  const isHidden=rl.style.display==='none'||rl.style.display==='';
+  rl.style.display=isHidden?'block':'none';
+}
+</script>
+</body>
+</html>
