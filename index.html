@@ -169,51 +169,6 @@ body::before {
 .rev-a.ok{color:#4ADE80;}.rev-a.err{color:#F87171;}
 
 @media(max-width:480px){ .pbwrap{display:none;} .txt-ans-wrap{flex-direction:column;align-items:flex-start;} }
-/* ══ ACCESS LOG & MONITOR PANEL ══ */
-#screen-monitor { background:var(--navy); }
-.mon-header { background:rgba(0,0,0,.3); border-bottom:1px solid rgba(255,255,255,.08); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
-.mon-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; color:var(--white); }
-.mon-body { max-width:800px; margin:0 auto; padding:20px 16px 80px; }
-
-.mon-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
-.mon-stat { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:14px 16px; }
-.mon-stat-num { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:var(--gold); line-height:1; }
-.mon-stat-lbl { font-size:11px; color:rgba(255,255,255,.4); margin-top:3px; text-transform:uppercase; letter-spacing:1px; }
-
-.log-panel { background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; }
-.log-panel-hdr { background:rgba(255,255,255,.05); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.08); }
-.log-panel-title { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; }
-.btn-clear-log { background:rgba(185,28,28,.2); color:#FCA5A5; font-size:11px; font-weight:700; padding:4px 12px; border:1px solid rgba(185,28,28,.3); border-radius:6px; cursor:pointer; font-family:'Syne',sans-serif; }
-
-.log-entries { max-height:420px; overflow-y:auto; }
-.log-entry { display:flex; gap:10px; align-items:flex-start; padding:9px 14px; border-bottom:1px solid rgba(255,255,255,.04); font-size:12px; }
-.log-entry:last-child { border-bottom:none; }
-.log-entry:hover { background:rgba(255,255,255,.03); }
-.log-ts { font-family:'Syne',sans-serif; font-size:10px; color:rgba(255,255,255,.3); white-space:nowrap; min-width:58px; padding-top:1px; }
-.log-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:5px; white-space:nowrap; min-width:42px; text-align:center; }
-.log-badge.ok    { background:#DCFCE7; color:#15803D; }
-.log-badge.info  { background:#EFF6FF; color:#1840A0; }
-.log-badge.warn  { background:#FEF9C3; color:#A16207; }
-.log-badge.error { background:#FEE2E2; color:#B91C1C; }
-.log-msg  { color:rgba(255,255,255,.75); flex:1; line-height:1.4; }
-.log-detail { font-size:11px; color:rgba(255,255,255,.35); margin-top:2px; }
-.log-empty { padding:28px; text-align:center; color:rgba(255,255,255,.25); font-size:13px; }
-
-.mon-section { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:1.5px; margin:18px 0 8px; }
-
-.config-box { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:14px 16px; font-size:12px; font-family:monospace; color:rgba(255,255,255,.6); line-height:1.8; word-break:break-all; }
-.config-row { display:flex; gap:8px; margin-bottom:4px; }
-.config-key { color:var(--gold); min-width:120px; flex-shrink:0; }
-.config-val { color:rgba(255,255,255,.55); }
-.config-val.ok  { color:#4ADE80; }
-.config-val.bad { color:#F87171; }
-
-.btn-mon { background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); font-family:'Syne',sans-serif; font-size:12px; font-weight:700; padding:9px 18px; border:1px solid rgba(255,255,255,.1); border-radius:9px; cursor:pointer; transition:background .15s; margin-right:8px; margin-bottom:8px; }
-.btn-mon:hover { background:rgba(255,255,255,.12); color:var(--white); }
-.btn-mon.primary { background:var(--blue); border-color:var(--blue); color:var(--white); }
-
-@media(max-width:500px){ .mon-grid { grid-template-columns:1fr 1fr; } }
-
 </style>
 </head>
 <body>
@@ -239,10 +194,7 @@ body::before {
       <div class="admin-header-title">⚙️ Admin Panel PT. KPUS</div>
       <div class="admin-header-sub">Generate kode akses untuk peserta</div>
     </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn-mon" onclick="openMonitor()" style="background:rgba(212,168,67,.15);color:var(--gold);border-color:rgba(212,168,67,.3);font-size:11px;padding:7px 12px;">🔍 Monitor</button>
-      <button class="btn-logout" onclick="adminLogout()">Keluar</button>
-    </div>
+    <button class="btn-logout" onclick="adminLogout()">Keluar</button>
   </div>
 
   <div class="admin-wrap">
@@ -385,7 +337,7 @@ body::before {
 // ══════════════════════════════════════════════════════
 // CONFIG — ganti URL setelah deploy Apps Script
 // ══════════════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCrTRmQ8EXl8LhL-SqDF8xOeVFqlOqSOAhShKtQPzoGRJIvB_golPyw7devXA8XqrTLg/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3FX4kfqqih8mrrQV09AKXVcfqfepBBGG7FcaNzd3OXzVbSk5VI7fdCVsUCepU-zRw/exec';
 const ADMIN_PASSWORD  = 'LMP2025wpt';   // ← ganti sesuai keinginan Anda
 
 // ══════════════════════════════════════════════════════
@@ -642,11 +594,9 @@ function adminLogin(){
     adminLoggedIn=true;
     document.getElementById('admin-pw-inp').value='';
     err.textContent='';
-    addLog('ok','Admin login berhasil','');
     renderLog();
     showScreen('screen-admin');
   } else {
-    addLog('warn','Admin login gagal','Password salah');
     err.textContent='✗ Password salah.';
     setTimeout(()=>err.textContent='',3000);
   }
@@ -720,7 +670,6 @@ function pesertaMasuk(){
   err.textContent='';
   btn.textContent='Memeriksa kode...';
   btn.disabled=true;
-  addLog('info','Validasi kode dimulai','Kode: '+kode.slice(0,3)+'*** | Nama: '+nama);
 
   // Cek dulu apakah kode ada di log lokal (mode offline / file lokal)
   const localEntry=kodeLog.find(k=>k.kode===kode&&!k.used);
@@ -745,7 +694,6 @@ function pesertaMasuk(){
       clearTimeout(timeout);
       btn.textContent='Lanjut →';btn.disabled=false;
       if(res.valid){
-        addLog('ok','Kode valid — peserta masuk','Nama: '+nama+' | Jabatan: '+jabatan);
         userData={nama,jabatan,kode};
         document.getElementById('intro-nama').textContent=nama;
         document.getElementById('intro-jabatan').textContent=jabatan||'';
@@ -754,7 +702,6 @@ function pesertaMasuk(){
         renderLog();
         showScreen('screen-intro');
       } else {
-        addLog('warn','Kode TIDAK valid','Reason: '+(res.reason||'—'));
         err.textContent='✗ '+(res.reason||'Kode tidak valid. Minta kode baru dari admin.');
       }
     })
@@ -785,8 +732,6 @@ function startQuiz(){
 
   document.getElementById('hdr-name').textContent=userData.nama;
   currentIdx=0;score=0;answers=[];secondsLeft=720;timedOut=false;answered=false;quizEnded=false;
-  _submitSent=false; // reset guard per sesi
-  addLog('info','Tes dimulai','Peserta: '+userData.nama+' | '+questions.length+' soal');
   showScreen('screen-quiz');
   startTimer();renderQ();
 }
@@ -896,50 +841,33 @@ function nextQ(){
 function endQuiz(){
   if(quizEnded) return;  // ← GUARD: hanya jalan 1x
   quizEnded=true;
-  clearInterval(timerInt);
-  addLog('info','Tes selesai','Sisa waktu: ' + fmt(Math.max(0,secondsLeft)) + ' | Jawaban: ' + answers.length);
-  showScreen('screen-result');
+  clearInterval(timerInt);showScreen('screen-result');
   const total=answers.length;
   const persen=total>0?Math.round(score/total*100):0;
   const grade=persen>=90?'A':persen>=75?'B':persen>=60?'C':persen>=40?'D':'E';
   const persentil=score>=40?'>99%':score>=35?'~95%':score>=30?'~85%':score>=25?'~65%':score>=20?'~40%':score>=15?'~20%':'~10%';
   const ts=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
 
-  // Siapkan detail jawaban per soal untuk PDF
-  const detailJawaban = questions.map((q, i) => {
-    const ans = answers[i];
-    if (!ans) {
-      // Soal tidak dijawab (waktu habis sebelum sampai soal ini)
-      return {
-        no: i + 1,
-        soal: q.q,
-        cat: q.cat,
-        lv: q.lv,
-        type: q.type,
-        jawaban_peserta: '—',
-        jawaban_benar: q.type === 'MC' ? q.c[q.a] : q.a.toString(),
-        status: 'tidak_dijawab'
-      };
-    }
+  // ── Susun array jawaban per soal sesuai urutan ID soal (1–50) ──
+  // answers[] berisi {q, chosen, correct, ok, type} sesuai urutan soal ditampilkan
+  // Kita petakan kembali ke urutan ID 1–50 menggunakan questions[]
+  const jawabanPerSoal = questions.map((q, idx) => {
+    const ans = answers[idx];
     return {
-      no: i + 1,
-      soal: q.q,
-      cat: q.cat,
-      lv: q.lv,
-      type: q.type,
-      jawaban_peserta: ans.chosen,
-      jawaban_benar: ans.correct,
-      status: ans.ok ? 'benar' : 'salah'
+      id:      q.id,
+      jwb:     ans ? ans.chosen : '',   // jawaban yang dipilih peserta
+      benar:   ans ? ans.correct : '',  // jawaban yang benar
+      ok:      ans ? ans.ok : false     // benar/salah
     };
   });
 
-  // Kirim ke Google Sheet
+  // Kirim ke Google Sheet (termasuk detail jawaban)
   kirimKeServer({
     action:'submitResult',
     timestamp:ts,
     nama:userData.nama,jabatan:userData.jabatan,kode:userData.kode,
     score,total,persen,grade,persentil,waktuTersisa:fmt(Math.max(0,secondsLeft)),
-    detailJawaban: JSON.stringify(detailJawaban)
+    jawabanDetail: jawabanPerSoal   // ← TAMBAHAN: array jawaban per soal
   });
 
   // Tampilkan pesan selesai saja
@@ -949,68 +877,71 @@ function endQuiz(){
 }
 
 // ══════════════════════════════════════════════════════
-// KIRIM KE APPS SCRIPT + ACCESS LOG
-// Discord HANYA dikirim dari Apps Script (server-side)
-// untuk menghindari duplikasi
+// KIRIM KE APPS SCRIPT
 // ══════════════════════════════════════════════════════
-
-// Access log — tersimpan di memory session
-const accessLog = [];
-function addLog(level, msg, detail=''){
-  const ts = new Date().toLocaleTimeString('id-ID');
-  accessLog.unshift({ ts, level, msg, detail });
-  if(accessLog.length > 100) accessLog.pop();
-  renderAccessLog();
-}
-
-let _submitSent = false; // guard: submit hanya 1x per sesi tes
+const DISCORD_WEBHOOK='https://discord.com/api/webhooks/1493451394198536192/pQjW2Ajd61hKx3vyehKzeEmRll6YOwd5jSNPJ4SubQrh_yCpDXVoRP2JgOixtvmloxP3';
 
 function kirimKeServer(payload){
-  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE')){
-    addLog('warn','APPS_SCRIPT_URL belum diset','Config belum diisi');
-    return;
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE'))return;
+
+  // Gunakan fetch (POST) untuk payload besar yang mengandung jawabanDetail
+  // Fallback ke iframe jika fetch gagal
+  const dataStr = encodeURIComponent(JSON.stringify(payload));
+  const url = APPS_SCRIPT_URL + '?data=' + dataStr;
+
+  // Coba fetch dulu (lebih reliable untuk data besar)
+  fetch(url, { mode: 'no-cors' })
+    .then(() => {
+      if(payload.action==='submitResult'){
+        showToast('✅ Hasil tersimpan!');
+        kirimDiscord(payload);
+      }
+    })
+    .catch(() => {
+      // Fallback: iframe
+      const iframe=document.createElement('iframe');
+      iframe.style.display='none';
+      iframe.src=url;
+      iframe.onload=()=>{
+        setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} },3000);
+        if(payload.action==='submitResult'){
+          showToast('✅ Hasil tersimpan!');
+          kirimDiscord(payload);
+        }
+      };
+      iframe.onerror=()=>{ try{document.body.removeChild(iframe);}catch(e){} };
+      document.body.appendChild(iframe);
+    });
+
+  // Fallback toast setelah 5 detik (jika onload tidak terpicu)
+  if(payload.action==='submitResult'){
+    setTimeout(()=>{
+      kirimDiscord(payload);
+      showToast('✅ Hasil terkirim!');
+    },5000);
   }
-  if(payload.action === 'submitResult'){
-    if(_submitSent){ addLog('warn','Submit diabaikan','Guard: sudah pernah submit'); return; }
-    _submitSent = true;
-  }
+}
 
-  const url = APPS_SCRIPT_URL + '?data=' + encodeURIComponent(JSON.stringify(payload));
-  addLog('info', 'Mengirim ke server...', 'Action: ' + payload.action);
-
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = url;
-
-  let _loaded = false;
-
-  iframe.onload = () => {
-    if(_loaded) return; _loaded = true;
-    setTimeout(()=>{ try{ document.body.removeChild(iframe); }catch(e){} }, 3000);
-    if(payload.action === 'submitResult'){
-      addLog('ok','Data berhasil terkirim ke server','Sheet + PDF + Email + Discord diproses server');
-      showToast('✅ Hasil tersimpan!');
-    } else {
-      addLog('ok','Response server diterima','Action: ' + payload.action);
-    }
-  };
-
-  iframe.onerror = (e) => {
-    addLog('error','iframe error — server tidak merespons', String(e));
-    try{ document.body.removeChild(iframe); }catch(ex){}
-    showToast('⚠️ Gagal kirim, coba lagi', false);
-  };
-
-  document.body.appendChild(iframe);
-  addLog('info','iframe dikirim','URL panjang: ' + url.length + ' chars');
-
-  // Timeout fallback — jika onload tidak terpanggil dalam 15 detik
-  setTimeout(()=>{
-    if(!_loaded && payload.action === 'submitResult'){
-      addLog('warn','Timeout 15 detik — server lambat atau error','Cek Apps Script execution log');
-      showToast('⚠️ Server lambat, tapi data mungkin tersimpan', false);
-    }
-  }, 15000);
+function kirimDiscord(payload){
+  const ts=payload.timestamp||'';
+  const score=payload.score!==undefined?payload.score:'—';
+  const total=payload.total||50;
+  const grade=payload.grade||'—';
+  const kategori=score>=35?'Sangat Tinggi (Superior)':score>=30?'Tinggi':score>=25?'Di Atas Rata-Rata':score>=20?'Rata-Rata':score>=15?'Rata-Rata Bawah':'Di Bawah Rata-Rata';
+  const embed={embeds:[{
+    title:'📋 Hasil Tes Seleksi — Selesai',
+    color:0xD4A843,
+    fields:[
+      {name:'👤 Nama',      value:payload.nama    ||'—', inline:true},
+      {name:'💼 Jabatan',   value:payload.jabatan ||'—', inline:true},
+      {name:'📅 Tgl Test',  value:ts,                    inline:false},
+      {name:'🎯 Score',     value:'**'+score+' / '+total+'** — Grade **'+grade+'**', inline:false},
+      {name:'📝 Keterangan',value:kategori,              inline:false},
+      {name:'📧 Status',    value:'Hasil dikirim ke **hrdgamemorial@gmail.com**', inline:false}
+    ],
+    footer:{text:'PT. KPUS Assessment System'}
+  }]};
+  fetch(DISCORD_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(embed)}).catch(()=>{});
 }
 
 // ══════════════════════════════════════════════════════
@@ -1030,201 +961,6 @@ function toggleReview(){
   const isHidden=rl.style.display==='none'||rl.style.display==='';
   rl.style.display=isHidden?'block':'none';
 }
-
-// ══════════════════════════════════════════════════════
-// MONITOR PANEL
-// ══════════════════════════════════════════════════════
-
-function openMonitor(){
-  refreshMonitor();
-  showScreen('screen-monitor');
-}
-
-function refreshMonitor(){
-  // Stats
-  document.getElementById('ms-kode-gen').textContent  = kodeLog.length;
-  document.getElementById('ms-log-count').textContent = accessLog.length;
-  document.getElementById('ms-errors').textContent    = accessLog.filter(l=>l.level==='error').length;
-  document.getElementById('ms-submit-status').textContent = _submitSent ? '✓ Sent' : '—';
-
-  // Config check
-  const urlOk = APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes('PASTE');
-  document.getElementById('cfg-url').textContent  = urlOk
-    ? '✓ ' + APPS_SCRIPT_URL.slice(0,40) + '…'
-    : '✗ BELUM DISET!';
-  document.getElementById('cfg-url').className = 'config-val ' + (urlOk ? 'ok' : 'bad');
-
-  document.getElementById('cfg-pw').textContent  = (typeof ADMIN_PASSWORD !== 'undefined' && ADMIN_PASSWORD)
-    ? '✓ Set (' + ADMIN_PASSWORD.length + ' chars)'
-    : '✗ Kosong';
-  document.getElementById('cfg-pw').className = 'config-val ok';
-
-  document.getElementById('cfg-guard').textContent = _submitSent ? 'LOCKED (sudah submit)' : 'OPEN (belum submit)';
-  document.getElementById('cfg-guard').className   = 'config-val ' + (_submitSent ? 'ok' : 'info');
-
-  document.getElementById('cfg-quiz').textContent =
-    'quizEnded=' + quizEnded +
-    ' | soal=' + currentIdx + '/' + (questions.length||0) +
-    ' | skor=' + score +
-    ' | jawaban=' + answers.length;
-  document.getElementById('cfg-quiz').className = 'config-val';
-
-  renderAccessLog();
-}
-
-function renderAccessLog(){
-  const el = document.getElementById('log-entries-el');
-  if(!el) return;
-  document.getElementById('log-count-label').textContent = accessLog.length + ' entries';
-  // Update stats di monitor jika panel terbuka
-  const msEl = document.getElementById('ms-log-count');
-  if(msEl) msEl.textContent = accessLog.length;
-  const msErr = document.getElementById('ms-errors');
-  if(msErr) msErr.textContent = accessLog.filter(l=>l.level==='error').length;
-
-  if(accessLog.length === 0){
-    el.innerHTML = '<div class="log-empty">Belum ada log.</div>';
-    return;
-  }
-  el.innerHTML = accessLog.map(e => `
-    <div class="log-entry">
-      <span class="log-ts">${e.ts}</span>
-      <span class="log-badge ${e.level}">${e.level.toUpperCase()}</span>
-      <div>
-        <div class="log-msg">${escHtml(e.msg)}</div>
-        ${e.detail ? '<div class="log-detail">' + escHtml(e.detail) + '</div>' : ''}
-      </div>
-    </div>`).join('');
-}
-
-function escHtml(s){
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function clearAccessLog(){
-  accessLog.length = 0;
-  renderAccessLog();
-  addLog('info','Log dibersihkan');
-}
-
-function testLogEntry(){
-  addLog('ok',   'Test OK — sistem berjalan normal',    'Manual test dari panel monitor');
-  addLog('info', 'Test INFO — contoh pesan info',       'Detail tambahan');
-  addLog('warn', 'Test WARN — contoh peringatan',       'Sesuatu yang perlu diperhatikan');
-  addLog('error','Test ERROR — contoh error',           'Error detail di sini');
-}
-
-function testPingServer(){
-  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE')){
-    addLog('error','Ping gagal — APPS_SCRIPT_URL belum diset','');
-    return;
-  }
-  addLog('info','Ping ke server...','');
-  const url = APPS_SCRIPT_URL + '?data=' + encodeURIComponent(JSON.stringify({action:'ping',ts:Date.now()}));
-  const iframe = document.createElement('iframe');
-  iframe.style.display='none';
-  iframe.src = url;
-  const t = Date.now();
-  iframe.onload = () => {
-    addLog('ok','Ping OK — server merespons','Latency: ~' + (Date.now()-t) + 'ms');
-    try{ document.body.removeChild(iframe); }catch(e){}
-    refreshMonitor();
-  };
-  iframe.onerror = () => {
-    addLog('error','Ping GAGAL — server tidak merespons','Cek URL dan deployment Apps Script');
-    try{ document.body.removeChild(iframe); }catch(e){}
-  };
-  document.body.appendChild(iframe);
-  setTimeout(()=>{
-    try{ document.body.removeChild(iframe); }catch(e){}
-    addLog('warn','Ping timeout 10 detik','Server mungkin lambat atau error');
-  }, 10000);
-}
-
 </script>
-
-<!-- ══════════════════ MONITOR PANEL ══════════════════ -->
-<div id="screen-monitor" class="screen">
-  <div class="mon-header">
-    <div>
-      <div class="mon-title">🔍 Monitor & Access Log</div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn-mon" onclick="refreshMonitor()">↻ Refresh</button>
-      <button class="btn-logout" onclick="showScreen('screen-admin')">← Admin</button>
-    </div>
-  </div>
-
-  <div class="mon-body">
-
-    <!-- STATS -->
-    <div class="mon-section">Status Sesi</div>
-    <div class="mon-grid">
-      <div class="mon-stat">
-        <div class="mon-stat-num" id="ms-kode-gen">0</div>
-        <div class="mon-stat-lbl">Kode Dibuat</div>
-      </div>
-      <div class="mon-stat">
-        <div class="mon-stat-num" id="ms-log-count">0</div>
-        <div class="mon-stat-lbl">Log Entries</div>
-      </div>
-      <div class="mon-stat">
-        <div class="mon-stat-num" id="ms-submit-status">—</div>
-        <div class="mon-stat-lbl">Status Submit</div>
-      </div>
-      <div class="mon-stat">
-        <div class="mon-stat-num" id="ms-errors">0</div>
-        <div class="mon-stat-lbl">Errors</div>
-      </div>
-    </div>
-
-    <!-- CONFIG CHECK -->
-    <div class="mon-section">Config Check</div>
-    <div class="config-box" id="config-check-box">
-      <div class="config-row">
-        <span class="config-key">APPS_SCRIPT_URL</span>
-        <span class="config-val" id="cfg-url">Memuat...</span>
-      </div>
-      <div class="config-row">
-        <span class="config-key">ADMIN_PASSWORD</span>
-        <span class="config-val" id="cfg-pw">Memuat...</span>
-      </div>
-      <div class="config-row">
-        <span class="config-key">Discord (HTML)</span>
-        <span class="config-val ok">✓ DINONAKTIFKAN — hanya dari server</span>
-      </div>
-      <div class="config-row">
-        <span class="config-key">Submit Guard</span>
-        <span class="config-val" id="cfg-guard">Memuat...</span>
-      </div>
-      <div class="config-row">
-        <span class="config-key">Quiz State</span>
-        <span class="config-val" id="cfg-quiz">Memuat...</span>
-      </div>
-    </div>
-
-    <!-- TEST TOOLS -->
-    <div class="mon-section">Tools</div>
-    <div style="margin-bottom:16px;">
-      <button class="btn-mon primary" onclick="testPingServer()">📡 Ping Server</button>
-      <button class="btn-mon" onclick="testLogEntry()">📝 Test Log Entry</button>
-      <button class="btn-mon" onclick="clearAccessLog()">🗑 Clear Log</button>
-    </div>
-
-    <!-- ACCESS LOG -->
-    <div class="mon-section">Access Log (Session)</div>
-    <div class="log-panel">
-      <div class="log-panel-hdr">
-        <span class="log-panel-title">Log Real-time</span>
-        <span style="font-size:11px;color:rgba(255,255,255,.3);" id="log-count-label">0 entries</span>
-      </div>
-      <div class="log-entries" id="log-entries-el">
-        <div class="log-empty">Belum ada log. Lakukan aksi untuk melihat log.</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
 </body>
 </html>
